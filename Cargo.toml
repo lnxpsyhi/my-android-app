@@ -1,0 +1,10 @@
+[package]
+name = "my-android-app"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = [ "cdylib" ]
+
+[dependencies]
+slint = { version = "1.7.1", features = ["backend-android-activity-06"] }
