@@ -1,38 +1,93 @@
+use rand::Rng;
+
 
 #[no_mangle]
 fn android_main(app: slint::android::AndroidApp) {
     slint::android::init(app).unwrap();
 
     slint::slint! {
-        import { GroupBox, Button, CheckBox, ComboBox, Slider, Switch } from "std-widgets.slint";
+        import { Button, GroupBox, TabWidget, AboutSlint } from "std-widgets.slint";
+        import "res/fonts/cherolina/Cherolina.ttf";
+
+        struct Die {
+            image: image,
+        }
+
         export component MainWindow inherits Window {
+
+            in property <[Die]> dice: [
+                { image: @image-url("res/images/dice/dice_1.png") },
+                { image: @image-url("res/images/dice/dice_2.png") },
+                { image: @image-url("res/images/dice/dice_3.png") },
+                { image: @image-url("res/images/dice/dice_4.png") },
+                { image: @image-url("res/images/dice/dice_5.png") },
+                { image: @image-url("res/images/dice/dice_6.png") },
+            ];
+
+            in property <int> index: 0;
+
+            callback rand-num(int);
+
+            background: purple;
+
             GroupBox {
+                width: parent.width;
+                height: parent.height;
                 VerticalLayout {
-                    txt := Text {
-                        text: "Hello, World!";
-                        color: purple; 
-                        font-size: 32px;
-                        font-family: "Verdana";
-                    }
-                    slider-val := Text { text: "0"; }
-                    txt-input := TextInput {
-                        font-size: 32px;
-                        font-family: "Verdana";
-                        wrap: TextWrap.word-wrap;
-                    }
-                    ComboBox { model: [ "Male", "Female" ];}
-                    Switch { text: "Switch"; toggled => {} }
-                    slider := Slider { released => { slider-val.text = self.value }}
-                    CheckBox { text: "Agree with the terms and angrements."; }
-                    Button {
-                        text: "Click Me!";
-                        clicked => {
-                            txt.text = txt-input.text;
+                    TabWidget {
+                        Tab {
+                            title: "Dice";
+                            VerticalLayout {
+                                spacing: 10px;
+                                padding: 10px;
+                                Text {
+                                    text: "Ai's Dice";
+                                    color: white;
+                                    font-family: "Cherolina";
+                                    font-size: 32px;
+                                    horizontal-alignment: center;
+                                }
+                                Image {
+                                    source: dice[index].image;
+                                }
+                                Button {
+                                    text: "Roll";
+                                    height: 50px;
+                                    clicked => {
+                                        root.rand-num(dice.length);
+                                    }
+                                }
+                            }
+                        }
+                        Tab {
+                            title: "Tab 2";
+                            Text {
+                                text: "Coming soon...";
+                                color: white;
+                                font-family: "Cherolina";
+                                font-size: 32px;
+                            }
+                        }
+                        Tab {
+                            title: "About";
+                            AboutSlint {}
                         }
                     }
                 }
             }
         }
+
     }
-    MainWindow::new().unwrap().run().unwrap();
+
+    let window = MainWindow::new().unwrap();
+
+    let weak = window.as_weak();
+
+    window.on_rand_num(move |len| {
+        let rand_num = rand::thread_rng().gen_range(0..len);
+        let window = weak.unwrap();
+        window.set_index(rand_num);
+    });
+
+    window.run().unwrap();
 }
