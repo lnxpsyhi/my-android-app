@@ -1,0 +1,19 @@
+
+export component CustomButton inherits Rectangle {
+    in property <string> label;
+    callback clicked <=> touch-area.clicked;
+    background: touch-area.pressed ? purple : touch-area.has-hover ? yellow : gray;
+    border-radius: 5px;
+    drop-shadow-color: black;
+    drop-shadow-blur: 5px;
+    drop-shadow-offset-y: 5px;
+    animate background {
+         duration: 100ms;
+         easing: ease-out;
+    }
+    Text {
+        text: root.label;
+        color: touch-area.pressed ? white : black;
+    }
+    touch-area := TouchArea {}
+}
