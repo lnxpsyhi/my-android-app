@@ -36,7 +36,7 @@ fn android_main(app: slint::android::AndroidApp) {
                 VerticalLayout {
                     TabWidget {
                         Tab {
-                            title: "Dice";
+                            title: "Tab 1";
                             VerticalLayout {
                                 spacing: 10px;
                                 padding: 10px;
